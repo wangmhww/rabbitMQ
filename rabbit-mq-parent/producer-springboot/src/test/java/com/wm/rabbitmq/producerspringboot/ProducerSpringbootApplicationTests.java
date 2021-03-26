@@ -3,6 +3,7 @@ package com.wm.rabbitmq.producerspringboot;
 import com.wm.rabbitmq.config.RabbitMQConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.springframework.amqp.core.ReturnedMessage;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.aop.ThrowsAdvice;
@@ -30,7 +31,12 @@ class ProducerSpringbootApplicationTests {
                 }
             }
         });
+        rabbitTemplate.setReturnsCallback(new RabbitTemplate.ReturnsCallback() {
+            @Override
+            public void returnedMessage(ReturnedMessage returnedMessage) {
 
+            }
+        });
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME,
                 "boot.haha",
                 "汪明fff11");

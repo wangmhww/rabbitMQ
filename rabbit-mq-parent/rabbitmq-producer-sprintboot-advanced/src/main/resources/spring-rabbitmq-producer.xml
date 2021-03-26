@@ -24,6 +24,7 @@
 
     <rabbit:template id="rabbitTemplate" connection-factory="connectionFactory"></rabbit:template>
 
+    <!-- =====================消息可靠性投递 start =====================-->
     <rabbit:queue id="test_queue_confirm" name="test_queue_confirm"/>
 
     <!-- 消息可靠性投递 -->
@@ -33,4 +34,105 @@
         </rabbit:bindings>
     </rabbit:direct-exchange>
 
+    <!-- =====================消息可靠性投递 end =====================-->
+
+    <!-- ===================== 延时队列ttl start =====================-->
+
+    <rabbit:queue id="rabbit-ttl">
+        <rabbit:queue-arguments>
+            <entry key="x-message-ttl" value="10000" value-type="java.lang.Integer"></entry>
+        </rabbit:queue-arguments>
+    </rabbit:queue>
+    
+    <rabbit:topic-exchange name="rabbitmq-exchange-ttl" >
+        <rabbit:bindings>
+            <rabbit:binding pattern="ttt.#" queue="rabbit-ttl"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+    <!-- ===================== 延时队列ttl end =====================-->
+
+    <!-- ===================== 死信队列  start =====================-->
+    <!--
+        死信队列：
+            1、声明正常队列（test_queue_dlx）和交换机（test_exchange_dlx）
+            2、声明死信队列（queue_dlx）和死信交换机（exchange_dlx）
+            3、正常队列绑定死信交换机
+                设置两个参数：
+                    * x-dead-letter-exchange: 死信交换机名称
+                    * x-dead-letter-routing-key: 发送给死信交换机routing key
+    -->
+    <!--
+            声明正常队列
+    -->
+
+    <rabbit:queue name="test_queue_dlx" id="test_queue_dlx">
+        <!-- 3、正常队列绑定死信交换机   -->
+        <rabbit:queue-arguments>
+            <!-- 3.1 x-dead-letter-exchange:死信交换机名称-->
+            <entry key="x-dead-letter-exchange" value="exchange_dlx"></entry>
+            <!-- 3.2、x-dead-letter-routing-key 发送给死信队列的routing key -->
+            <entry key="x-dead-letter-routing-key" value="dlx.hehe"/>
+
+            <!-- 4.1、x-message-ttl 设置队列过期时间-->
+            <entry key="x-message-ttl" value="10000" value-type="java.lang.Integer"/>
+
+            <!-- 4.2、x-message-ttl 设置队列长度限制 -->
+            <entry key="x-max-length" value="10" value-type="java.lang.Integer"></entry>
+        </rabbit:queue-arguments>
+
+    </rabbit:queue>
+    
+    <rabbit:topic-exchange name="test_exchange_dlx" id="test_exchange_dlx">
+        <rabbit:bindings>
+            <rabbit:binding pattern="test.dlx.#" queue="test_queue_dlx"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+    <!--
+        2、声明死信队列（queue_dlx）和死信交换机（exchange_dlx）
+        
+    -->
+    <rabbit:queue id="queue_dlx" name="queue_dlx"></rabbit:queue>
+    <rabbit:topic-exchange name="exchange_dlx" >
+        <rabbit:bindings>
+            <rabbit:binding pattern="dlx.#" queue="queue_dlx"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+    <!-- ===================== 死信队列 end =====================-->
+
+
+
+    <!-- ===================== 延迟队列  start =====================-->
+    <!--
+        死信队列：
+            1、声明正常队列（order_queue）和交换机（order_exchange）
+            2、声明死信队列（order_queue_dlx）和死信交换机（order_exchange_dlx）
+            3、绑定
+    -->
+
+    <!-- 1、定义正常队列 -->
+    <rabbit:queue id="order_queue" name="order_queue">
+        <!-- 3、绑定，设置正常队列过期时间 -->
+        <rabbit:queue-arguments>
+            <entry key="x-dead-letter-exchange" value="order_exchange_dlx"></entry>
+            <entry key="x-dead-letter-routing-key" value="dlx.order.cancel"/>
+            <entry key="x-message-ttl" value="10000" value-type="java.lang.Integer"/>
+        </rabbit:queue-arguments>
+
+    </rabbit:queue>
+    <rabbit:topic-exchange name="order_exchange" >
+        <rabbit:bindings>
+            <rabbit:binding pattern="order.#" queue="order_queue"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+    <!--定义死信交换机order_exchange_dlx和队列order_queue_dlx-->
+    <rabbit:queue id="order_queue_dlx" name="order_queue_dlx"></rabbit:queue>
+    <rabbit:topic-exchange name="order_exchange_dlx" id="order_exchange_dlx">
+        <rabbit:bindings>
+            <rabbit:binding pattern="dlx.order.#" queue="order_queue_dlx"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+    <!-- ===================== 延迟队列 end =====================-->
 </beans>

@@ -1,5 +1,6 @@
 package com.wm.rabbitmq;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.core.ReturnedMessage;
@@ -8,6 +9,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.sql.SQLOutput;
 
 /**
  * @author wangm
@@ -96,5 +99,38 @@ public class ProducerTest {
             rabbitTemplate.convertAndSend("test_change_confirm","confirm","message confirm "+ i);
         }
 
+    }
+    @Test
+    public void testTtl(){
+        for (int i = 0; i < 10; i++){
+            rabbitTemplate.convertAndSend("rabbitmq-exchange-ttl","ttt.hhh","message confirm "+ i);
+            System.out.println("发送消息");
+        }
+    }
+
+    // 死信交换机
+    @Test
+    public void testDlx(){
+//        rabbitTemplate.convertAndSend("test_exchange_dlx","test.dlx.hhh","发送消息..... ");
+        for (int i = 0 ; i < 20 ; i++){
+
+            rabbitTemplate.convertAndSend("test_exchange_dlx","test.dlx.hhh","发送消息..... ");
+        }
+        System.out.println("发送消息");
+    }
+
+    @Test
+    public void testDelay(){
+
+        try {
+            rabbitTemplate.convertAndSend("order_exchange","order.hhh","发送消息..... ");
+
+            for (int i = 10; i > 0; i--) {
+                System.out.println(i + "...");
+                Thread.sleep(1000);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

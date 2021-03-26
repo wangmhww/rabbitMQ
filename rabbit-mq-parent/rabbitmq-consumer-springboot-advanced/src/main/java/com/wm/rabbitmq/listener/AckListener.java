@@ -26,7 +26,7 @@ public class AckListener implements ChannelAwareMessageListener {
         // 3 进行业务处理
         System.out.println("==========进行业务处理=========");
         try {
-            int i = 5/0;
+//            int i = 5/0;
             // 4 进行消息手动签收
             channel.basicAck(deliveryTag,true);
         } catch (Exception e) {

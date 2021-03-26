@@ -25,9 +25,11 @@
         manual: 手动签收
         prefetch: 表示每次拉取多少条消息
     -->
-    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual" prefetch="2">
+<!--    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual" prefetch="2">-->
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual" prefetch="1">
 <!--        <rabbit:listener ref="ackListener" queue-names="test_queue_confirm"></rabbit:listener>-->
-        <rabbit:listener ref="qosListener" queue-names="test_queue_confirm"></rabbit:listener>
+<!--        <rabbit:listener ref="qosListener" queue-names="test_queue_confirm"></rabbit:listener>-->
+        <rabbit:listener ref="orderListener" queue-names="order_queue_dlx"></rabbit:listener>
     </rabbit:listener-container>
 
 </beans>
