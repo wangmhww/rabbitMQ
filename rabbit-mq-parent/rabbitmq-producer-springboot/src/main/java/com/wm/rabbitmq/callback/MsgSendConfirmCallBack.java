@@ -1,4 +1,4 @@
-package com.wm.rabbitmq.callBack;
+package com.wm.rabbitmq.callback;
 
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

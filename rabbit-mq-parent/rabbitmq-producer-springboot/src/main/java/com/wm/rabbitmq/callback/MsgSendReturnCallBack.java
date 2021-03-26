@@ -1,4 +1,4 @@
-package com.wm.rabbitmq.callBack;
+package com.wm.rabbitmq.callback;
 
 import org.springframework.amqp.core.ReturnedMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

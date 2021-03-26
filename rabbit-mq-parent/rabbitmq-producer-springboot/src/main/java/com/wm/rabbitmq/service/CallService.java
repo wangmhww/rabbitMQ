@@ -1,6 +1,5 @@
 package com.wm.rabbitmq.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wm.rabbitmq.domain.User;
 
 /**

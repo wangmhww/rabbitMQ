@@ -1,7 +1,7 @@
 package com.wm.rabbitmq.config;
 
-import com.wm.rabbitmq.callBack.MsgSendConfirmCallBack;
-import com.wm.rabbitmq.callBack.MsgSendReturnCallBack;
+import com.wm.rabbitmq.callback.MsgSendConfirmCallBack;
+import com.wm.rabbitmq.callback.MsgSendReturnCallBack;
 import com.wm.rabbitmq.contant.RabbitContant;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
