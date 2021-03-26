@@ -16,6 +16,16 @@
     <properties>
         <java.version>1.8</java.version>
     </properties>
+    <modules>
+        <module>consumer-springboot</module>
+        <module>producer-springboot</module>
+        <module>rabbit-mq-first</module>
+        <module>rabbitmq-consumer-springboot</module>
+        <module>rabbitmq-producer-springboot</module>
+        <module>rabbitmq-consumer-springboot-advanced</module>
+        <module>rabbitmq-producer-sprintboot-advanced</module>
+
+    </modules>
     <dependencies>
 
     </dependencies>
