@@ -3,9 +3,11 @@ package com.wm.rabbitmq.config;
 import com.wm.rabbitmq.callback.MsgSendConfirmCallBack;
 import com.wm.rabbitmq.callback.MsgSendReturnCallBack;
 import com.wm.rabbitmq.contant.RabbitContant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2021/3/2622:32
  */
 @Configuration
+@Slf4j
 public class RabbitMqConfig {
 
     @Autowired
@@ -29,23 +32,36 @@ public class RabbitMqConfig {
         return ExchangeBuilder.topicExchange(RabbitContant.RABBIT_EXCHANGE).durable(false).build();
     }
 
-    @Bean("callQueue")
-    public Queue callQueue(){
-        return QueueBuilder.durable(RabbitContant.RABBIT_QUEUE_CALL).build();
+    // 死信交换机
+    @Bean("ttlExchange")
+    public Exchange ttlExchange(){
+        return ExchangeBuilder.topicExchange(RabbitContant.RABBIT_TTL_EXCHANGE).durable(false).build();
     }
 
+    // 正常队列
+    @Bean("callQueue")
+    public Queue callQueue(){
+        return QueueBuilder.durable(RabbitContant.RABBIT_QUEUE_CALL).ttl(10000)
+                .deadLetterExchange(RabbitContant.RABBIT_TTL_EXCHANGE)
+                .deadLetterRoutingKey("send.#")
+                .maxLength(10).build();
+    }
+
+    // 死信队列
     @Bean("sendQueue")
     public Queue sendQueue(){
         return QueueBuilder.durable(RabbitContant.RABBIT_QUEUE_SEND).build();
     }
 
+    // 正常队列与交换机绑定
     @Bean
     public Binding callBinding(@Qualifier("exchange") Exchange exchange,@Qualifier("callQueue") Queue queue){
         return BindingBuilder.bind(queue).to(exchange).with("call.#").noargs();
     }
 
+    // 死信队列与交换机绑定
     @Bean
-    public Binding sendlBinding(@Qualifier("exchange") Exchange exchange,@Qualifier("sendQueue") Queue queue){
+    public Binding sendlBinding(@Qualifier("ttlExchange") Exchange exchange,@Qualifier("sendQueue") Queue queue){
         return BindingBuilder.bind(queue).to(exchange).with("send.#").noargs();
     }
 
@@ -85,4 +101,5 @@ public class RabbitMqConfig {
     public MsgSendReturnCallBack msgSendReturnCallBack(){
         return new MsgSendReturnCallBack();
     }
+
 }

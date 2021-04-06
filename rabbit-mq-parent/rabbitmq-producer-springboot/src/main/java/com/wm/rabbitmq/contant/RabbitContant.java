@@ -11,6 +11,8 @@ public class RabbitContant {
 
     public final static String RABBIT_EXCHANGE = "springboot-exchange";
 
+    public final static String RABBIT_TTL_EXCHANGE = "springboot_ttl_exchange";
+
     public final static String RABBIT_ROUTING_KEY_SEND = "send.springboot";
 
     public final static String RABBIT_ROUTING_KEY_CALL = "call.springboot";
